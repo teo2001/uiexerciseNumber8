@@ -140,4 +140,52 @@ class FilterableCalendarApp extends Component {
   }
 }
 
+class FetchHolidays extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null,
+      isLoaded: false,
+      items: []
+    };
+  }
+
+  componentDidMount() {
+    fetch("https://holidayapi.com/v1/holidays?country=US&year=2008&key=547e5710-dc76-4a5a-afad-2e54d2b286e6")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            items: result.holidays
+          });
+        },
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
+  }
+
+  render() {
+    const { error, isLoaded, items } = this.state;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Loading...</div>;
+    } else {
+      let arregloFinal = [];
+      for (let x in items) {
+        arregloFinal.push([x, items[x][0]]);
+        console.log(`Date: ${x} , contents: ${items[x][0].name}`);
+      }
+      return (
+        <div>{arregloFinal[0][1].name}</div>
+      );
+    }
+  }
+}
+
 export default FilterableCalendarApp;
